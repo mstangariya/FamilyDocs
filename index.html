@@ -1,228 +1,358 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Family Documents Vault</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Family Vault</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0f172a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        :root {
+            --bg: #0f0f13;
+            --card-bg: #1c1c21;
+            --primary: #7F5AF0;
+            --secondary: #2Cb67D;
+            --text: #fffffe;
+            --text-sub: #94a1b2;
+            --glass: rgba(15, 15, 19, 0.95);
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+            margin: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<style>
-:root {
-    --bg: #0f172a;
-    --card: #111827;
-    --primary: #38bdf8;
-    --text: #e5e7eb;
-    --muted: #9ca3af;
-    --glass: rgba(255,255,255,0.04);
-}
+        /* HEADER */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-* {
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-}
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-}
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
 
-header {
-    padding: 16px;
-    font-size: 20px;
-    font-weight: 700;
-    text-align: center;
-    background: linear-gradient(135deg, #020617, #020617cc);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+        }
 
-.container {
-    padding: 16px;
-    padding-bottom: 90px;
-}
+        .status-online {
+            background: var(--secondary);
+            box-shadow: 0 0 10px var(--secondary);
+        }
 
-.search {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    background: var(--card);
-    color: var(--text);
-    margin-bottom: 16px;
-}
+        /* SEARCH */
+        .search-wrapper {
+            position: relative;
+        }
 
-.card {
-    background: var(--card);
-    border-radius: 16px;
-    padding: 14px;
-    margin-bottom: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-}
+        input[type="text"] {
+            width: 100%;
+            background: #2a2a30;
+            border: none;
+            padding: 14px 45px;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
 
-.card h3 {
-    margin: 0;
-    font-size: 16px;
-}
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+        }
 
-.card p {
-    margin: 6px 0 10px;
-    color: var(--muted);
-    font-size: 13px;
-}
+        .clear-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-sub);
+            cursor: pointer;
+            display: none;
+        }
 
-.card a {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 600;
-}
+        /* TABS */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 15px 20px;
+        }
 
-.add-box {
-    background: var(--glass);
-    border: 1px dashed #334155;
-}
+        .tab {
+            background: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border: none;
-    background: #020617;
-    color: var(--text);
-}
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
 
-button {
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    background: var(--primary);
-    color: #020617;
-    font-weight: 700;
-    cursor: pointer;
-}
+        /* CONTENT */
+        .content {
+            padding: 10px 20px 100px;
+        }
 
-/* Bottom bar */
-.bottom-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--glass);
-    backdrop-filter: blur(12px);
-    display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
-    border-top: 1px solid rgba(255,255,255,0.06);
-}
+        .doc-card {
+            background: var(--card-bg);
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            animation: slideUp 0.3s ease forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
 
-.bottom-btn {
-    font-size: 12px;
-    color: var(--muted);
-    text-align: center;
-    cursor: pointer;
-}
+        .doc-info h3 {
+            margin: 0;
+            font-size: 16px;
+        }
 
-.bottom-btn span {
-    display: block;
-    font-size: 20px;
-}
-</style>
+        .owner-badge {
+            background: rgba(127, 90, 240, 0.2);
+            color: #bb9af7;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-top: 4px;
+            width: fit-content;
+        }
+
+        .arrow-icon {
+            opacity: 0.6;
+        }
+
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #loading-text {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-sub);
+        }
+
+        /* BOTTOM BAR */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 200;
+        }
+
+        .bottom-btn {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+
+        .bottom-btn span {
+            font-size: 20px;
+            display: block;
+        }
+
+        .bottom-btn:active {
+            color: var(--primary);
+            transform: scale(0.95);
+        }
+    </style>
 </head>
 
 <body>
 
-<header>📁 Family Documents Vault</header>
-
-<div class="container">
-
-<input class="search" id="search" placeholder="Search document..." onkeyup="render()">
-
-<div class="card add-box">
-    <h3>Add Document</h3>
-    <input id="docName" placeholder="Document name">
-    <input id="docPerson" placeholder="Person name">
-    <input id="docLink" placeholder="Google Drive link">
-    <select id="docCategory">
-        <option>ID</option>
-        <option>Education</option>
-        <option>Bank</option>
-        <option>Medical</option>
-        <option>Property</option>
-        <option>Other</option>
-    </select>
-    <button onclick="addDoc()">Save</button>
-</div>
-
-<div id="list"></div>
-
-</div>
-
-<div class="bottom-bar">
-    <div class="bottom-btn" onclick="goHome()">
-        <span>🏠</span>Home
+    <!-- HEADER -->
+    <div class="app-header">
+        <div class="header-top">
+            <h1>Family Vault</h1>
+            <div id="statusDot" class="status-dot"></div>
+        </div>
+        <div class="search-wrapper">
+            <div class="search-icon">🔍</div>
+            <input type="text" id="searchInput" placeholder="Search docs..." onkeyup="handleSearch()">
+            <div class="clear-icon" id="clearBtn" onclick="clearSearch()">✕</div>
+        </div>
     </div>
-    <div class="bottom-btn" onclick="refreshApp()">
-        <span>🔄</span>Refresh
+
+    <!-- TABS -->
+    <div class="tabs-container" id="tabsList"></div>
+
+    <!-- CONTENT -->
+    <div id="loading-text">Loading...</div>
+    <div class="content" id="docList"></div>
+
+    <!-- BOTTOM BAR -->
+    <div class="bottom-bar">
+        <div class="bottom-btn" onclick="goHome()">
+            <span>🏠</span>Home
+        </div>
+        <div class="bottom-btn" onclick="refreshData()">
+            <span>🔄</span>Refresh
+        </div>
     </div>
-</div>
 
-<script>
-let docs = JSON.parse(localStorage.getItem("familyDocs")) || [];
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzkjTRJamsMlOyPXBc7hKk-fyRt-4kWDc617Ix4bsDUHxoSPabElS9OZ74vlGWkOxygYA/exec";
 
-function addDoc() {
-    const doc = {
-        name: docName.value,
-        person: docPerson.value,
-        link: docLink.value,
-        category: docCategory.value
-    };
-    if (!doc.name || !doc.link) return alert("Enter name & link");
-    docs.push(doc);
-    localStorage.setItem("familyDocs", JSON.stringify(docs));
-    docName.value = docPerson.value = docLink.value = "";
-    render();
-}
+        let rawData = [];
+        let flatData = [];
+        let memberNames = [];
+        let currentMemberIndex = 1;
 
-function render() {
-    const q = search.value.toLowerCase();
-    list.innerHTML = "";
-    docs.filter(d =>
-        d.name.toLowerCase().includes(q) ||
-        d.person.toLowerCase().includes(q)
-    ).forEach(d => {
-        list.innerHTML += `
-        <div class="card">
-            <h3>${d.name}</h3>
-            <p>${d.person} • ${d.category}</p>
-            <a href="${d.link}" target="_blank">Open Document</a>
-        </div>`;
-    });
-}
+        window.onload = function () {
+            const cached = localStorage.getItem('familyDocsData');
+            if (cached) processData(JSON.parse(cached));
 
-function goHome() {
-    search.value = "";
-    render();
-}
+            fetch(scriptURL)
+                .then(res => res.json())
+                .then(data => {
+                    localStorage.setItem('familyDocsData', JSON.stringify(data));
+                    processData(data);
+                    document.getElementById("statusDot").classList.add("status-online");
+                });
+        };
 
-function refreshApp() {
-    location.reload();
-}
+        function processData(data) {
+            rawData = data;
+            document.getElementById("loading-text").style.display = "none";
 
-render();
+            memberNames = [];
+            flatData = [];
 
-/* Service worker */
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js");
-}
-</script>
+            for (let i = 1; i < data[0].length; i++) {
+                if (data[0][i]) memberNames.push({ name: data[0][i], index: i });
+            }
+
+            for (let r = 1; r < data.length; r++) {
+                for (let i = 1; i < data[0].length; i++) {
+                    if (data[r][i]) {
+                        flatData.push({
+                            docName: data[r][0],
+                            link: data[r][i],
+                            owner: data[0][i],
+                            ownerIndex: i
+                        });
+                    }
+                }
+            }
+
+            renderTabs();
+            selectMember(currentMemberIndex);
+        }
+
+        function renderTabs() {
+            const t = document.getElementById("tabsList");
+            t.innerHTML = "";
+            memberNames.forEach(m => {
+                const d = document.createElement("div");
+                d.className = "tab" + (m.index === currentMemberIndex ? " active" : "");
+                d.innerText = m.name;
+                d.onclick = () => selectMember(m.index);
+                t.appendChild(d);
+            });
+        }
+
+        function selectMember(index) {
+            currentMemberIndex = index;
+            renderTabs();
+
+            const list = [];
+            for (let r = 1; r < rawData.length; r++) {
+                if (rawData[r][index]) {
+                    list.push({ docName: rawData[r][0], link: rawData[r][index] });
+                }
+            }
+            renderList(list);
+        }
+
+        function handleSearch() {
+            const q = searchInput.value.toLowerCase();
+            clearBtn.style.display = q ? "block" : "none";
+            tabsList.style.display = q ? "none" : "flex";
+
+            renderList(q ? flatData.filter(d =>
+                d.docName.toLowerCase().includes(q) ||
+                d.owner.toLowerCase().includes(q)
+            ) : []);
+        }
+
+        function clearSearch() {
+            searchInput.value = "";
+            handleSearch();
+            selectMember(currentMemberIndex);
+        }
+
+        function renderList(items) {
+            docList.innerHTML = "";
+            if (!items.length) return;
+
+            items.forEach((i, n) => {
+                docList.innerHTML += `
+                <a class="doc-card" href="${i.link}" target="_blank" style="animation-delay:${n * 0.05}s">
+                    <div class="doc-info">
+                        <h3>${i.docName}</h3>
+                        ${i.owner ? `<div class="owner-badge">${i.owner}</div>` : ""}
+                    </div>
+                    <div class="arrow-icon">➜</div>
+                </a>`;
+            });
+        }
+
+        function goHome() {
+            clearSearch();
+            selectMember(memberNames[0].index);
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+    </script>
 
 </body>
 </html>
